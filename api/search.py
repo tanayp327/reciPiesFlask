@@ -6,7 +6,6 @@ from flask import Blueprint, request, jsonify
 import json
 import requests
 
-
 search_api = Blueprint('search_api', __name__,
                   url_prefix='/api/search')
 
@@ -50,4 +49,3 @@ class itemAPI:
             return searchItem(body.get("item"))
 
     api.add_resource(_Create, '/')
-
