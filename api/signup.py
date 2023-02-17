@@ -22,6 +22,6 @@ class signupAPI:
         def post(self):
             body = request.get_json()
             username = jsonify(body.get('username'))
-            return(username)
+            return {username + " has been registerd"}
 
     api.add_resource(_Create, '/')
