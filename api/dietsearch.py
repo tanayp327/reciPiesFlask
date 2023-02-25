@@ -23,6 +23,21 @@ url = f'https://api.edamam.com/api/recipes/v2?app_id={app_id}&app_key={app_key}&
 response = requests.get(url)
 
 if response.status_code == 200:
-    print(response.json())
+    data = response.json()
+    for hit in data['hits']:
+        recipe = hit['recipe']
+        uri = recipe['uri']
+        label = recipe['label']
+        calories = recipe['calories']
+        totalTime = recipe['totalTime']
+        ingredients = recipe['ingredients']
+        print(f'URI: {uri}')
+        print(f'Label: {label}')
+        print(f'Calories: {calories}')
+        print(f'Total time: {totalTime}')
+        print('Ingredients:')
+        for ingredient in ingredients:
+            print(f'\t{ingredient["text"]}')
+    print(data)
 else:
     print(f'Request failed with status code {response.status_code}')
