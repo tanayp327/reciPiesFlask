@@ -14,8 +14,8 @@ api = Api(recipe_api)
 
 # new code
 
-app_id = be8c6268
-app_key = 1da5fbf54060504cc2506d8c9fff673a
+app_id = 'be8c6268'
+app_key = '1da5fbf54060504cc2506d8c9fff673a'
 
 url = f'https://api.edamam.com/api/recipes/v2?app_id={app_id}&app_key={app_key}&type=public&q=lentils'
 
