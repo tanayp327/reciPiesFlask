@@ -27,6 +27,7 @@ def searchItem(item):
 
   response = requests.request("GET", url, headers=headers, params=querystring)
   parse_req = response.json()
+  
   for i in range(len(parse_req)):
       title = parse_req[i]["title"]
       ingredients = parse_req[i]["ingredients"]
