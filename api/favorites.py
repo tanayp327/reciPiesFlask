@@ -1,45 +1,57 @@
 import json
-import hashlib
-from contextlib import nullcontext
-from flask import Blueprint, jsonify, Flask, request
+import os
+from flask import Blueprint, request
 from flask_restful import Api, Resource
-import time
-import requests
 
-app = Flask(__name__)
-api = Api(app)
+favorites_api = Blueprint('favorites_api', __name__, url_prefix='/api/favorites')
+api = Api(favorites_api)
 
+# Define a new resource for recipe data
 class RecipeData(Resource):
-    def post(self, user_id):
+    # Handle POST requests to add a recipe to the favorites
+    def post(self):
+        # Get the recipe data from the request body
         data = request.get_json()
         title = data.get('title')
         ingredients = data.get('ingredients')
         instructions = data.get('instructions')
 
-        with open('users.json', 'r') as f:
-            users = json.loads(f.read())
+        # Read the favorites data from the favorites.json file
+        try:
+            with open('favorites.json', 'r') as f:
+                favorites = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            favorites = []
 
-        for user in users:
-            if user['UserID'] == user_id:
-                user['Favorites'].append({'title': title, 'ingredients': ingredients, 'instructions': instructions})
-                
-                with open('users.json', 'w') as f:
-                    f.write(json.dumps(users))
+        for favorite in favorites:
+            if favorite['title'] == title:
+                return {"message": "Recipe already exists in favorites."}
+            
+        # Add the recipe to the favorites
+        favorites.append({'title': title, 'ingredients': ingredients, 'instructions': instructions})
 
-                return {"message": "Data saved successfully"}
+        # Write the updated favorites data back to the favorites.json file
+        with open('favorites.json', 'w') as f:
+            json.dump(favorites, f)
 
-        return {"error": "User not found"}
+        # Return a success message
+        return {"message": "Data saved successfully"}
 
-    def get(self, user_id):
-        with open('users.json', 'r') as f:
-            users = json.loads(f.read())
-            for user in users:
-                if user['UserID'] == user_id:
-                    return user['Favorites']
-        
-        return {"error": "User not found"}
+class GetFavorites(Resource):
+    # Handle GET requests to retrieve all favorites
+    def get(self):
+        # Read the favorites data from the favorites.json file
+        try:
+            with open('favorites.json', 'r') as f:
+                favorites = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            favorites = []
 
-api.add_resource(RecipeData, '/user/<string:user_id>')
+        # Return all favorites
+        return favorites
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Add the RecipeData resource with the POST endpoint
+api.add_resource(RecipeData, '/favorites')
+
+# Add the GetFavorites resource with the GET endpoint
+api.add_resource(GetFavorites, '/favorites/all')
