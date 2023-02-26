@@ -13,6 +13,7 @@ from api.covid import covid_api # Blueprint import api definition
 from api.user import user_api # Blueprint import api definition
 from api.search import search_api 
 from api.favorites import favorites_api
+from api.dietsearch import restrictions_api
 
 # setup App pages
 from projects.projects import app_projects # Blueprint directory import projects definition
@@ -21,6 +22,7 @@ from projects.projects import app_projects # Blueprint directory import projects
 app.register_blueprint(covid_api) # register api routes
 app.register_blueprint(user_api) # register api routes
 app.register_blueprint(search_api)
+app.register_blueprint(restrictions_api)
 app.register_blueprint(favorites_api)
 app.register_blueprint(app_projects) # register app pages
 
