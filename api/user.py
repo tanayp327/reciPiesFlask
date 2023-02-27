@@ -17,25 +17,29 @@ class UserAPI:
             body = request.get_json()
             
             ''' Avoid garbage in, error checking '''
-            # validate name
-            name = body.get('name')
-            if name is None or len(name) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 210
+            # validate rname
+            rname = body.get('rname')
+            if rname is None or len(rname) < 2:
+                return {'message': f'Name is missing, or is less than 2 characters'}, 200
             # validate uid
             uid = body.get('uid')
             if uid is None or len(uid) < 2:
                 return {'message': f'User ID is missing, or is less than 2 characters'}, 210
-            password = body.get('password')
+            comment = body.get('comment')
+            if comment is None or len(comment) < 2:
+                return {'message': f'Comment is missing, or is less than 2 characters'}, 220            # validate rname
+            rating = body.get('rating')
+            if rating is None or len(rating) < 1:
+                return {'message': f'Rating is missing'}, 230
 
             ''' #1: Key code block, setup USER OBJECT '''
-            uo = User(name=name,
-                      uid=uid)
+            uo = User(rname=rname,
+                      comment=comment,
+                      rating=rating,
+                      uid=uid
+                      )
             
-            ''' Additional garbage error checking '''
-            # set password if provided
-            if password is not None:
-                uo.set_password(password)
-            
+           
             ''' #2: Key Code block to add user to database '''
             # create user in database
             user = uo.create()
@@ -43,13 +47,20 @@ class UserAPI:
             if user:
                 return jsonify(user.read())
             # failure returns error
-            return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 210
+            return {'message': f'Processed {rname}, either a format error or User ID {uid} is duplicate'}, 240
 
     class _Read(Resource):
         def get(self):
             users = User.query.all()    # read/extract all users from database
             json_ready = [user.read() for user in users]  # prepare output in json
             return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
+        
+        # def getComments(self):
+        #     users = User.query.filter(Resource.rname)    # read/extract comments for a specific recipe
+        #     json_ready = [user.read() for user in users]  # prepare output in json
+        #     return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps 
+        
+       
 
     # building RESTapi endpoint
     api.add_resource(_Create, '/create')
