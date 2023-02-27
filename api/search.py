@@ -12,6 +12,7 @@ search_api = Blueprint('search_api', __name__,
 # API docs https://flask-restful.readthedocs.io/en/latest/api.html
 api = Api(search_api)
 
+
 def searchItem(item):
   result_list = []
   # JSON data:
@@ -37,11 +38,12 @@ def searchItem(item):
           "ingredients": ingredients,
           "instructions": instructions
       }
-      with open("searches.json", "a") as jsonfile:
-          result_list.append(x)
-          json.dump(x, jsonfile)
+    #   with open("searches.json", "a") as jsonfile:
+    #       result_list.append(x)
+    #       json.dump(x, jsonfile)
   return result_list
 
+#api class
 class itemAPI:
     class _Create(Resource):
         def post(self):
