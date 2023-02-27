@@ -27,7 +27,6 @@ def searchItem(item):
 
   response = requests.request("GET", url, headers=headers, params=querystring)
   parse_req = response.json()
-  
   for i in range(len(parse_req)):
       title = parse_req[i]["title"]
       ingredients = parse_req[i]["ingredients"]
@@ -38,15 +37,23 @@ def searchItem(item):
           "ingredients": ingredients,
           "instructions": instructions
       }
-      result_list.append(x)
+      with open("searches.json", "a") as jsonfile:
+          result_list.append(x)
+          json.dump(x, jsonfile)
   return result_list
-
-
 
 class itemAPI:
     class _Create(Resource):
         def post(self):
             body = request.get_json()
             return searchItem(body.get("item"))
+    class _Read(Resource):
+        def get(self):
+            with open('searches.json', 'r') as f:
+                distros_dict = json.load(f)
 
+            for distro in distros_dict:
+                print(distro['title'])
+
+        
     api.add_resource(_Create, '/')
