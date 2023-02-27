@@ -29,8 +29,8 @@ class UserAPI:
             if comment is None or len(comment) < 2:
                 return {'message': f'Comment is missing, or is less than 2 characters'}, 220            # validate rname
             rating = body.get('rating')
-            if rating is None or len(rating) < 1:
-                return {'message': f'Rating is missing'}, 230
+            if rating is None or len(rating) < 1 or int(rating) > 10:
+                return {'message': f'Rating is missing, or is out of range'}, 230
 
             ''' #1: Key code block, setup USER OBJECT '''
             uo = User(rname=rname,
