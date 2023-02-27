@@ -47,13 +47,6 @@ class itemAPI:
         def post(self):
             body = request.get_json()
             return searchItem(body.get("item"))
-    class _Read(Resource):
-        def get(self):
-            with open('searches.json', 'r') as f:
-                distros_dict = json.load(f)
-
-            for distro in distros_dict:
-                print(distro['title'])
 
         
     api.add_resource(_Create, '/')
