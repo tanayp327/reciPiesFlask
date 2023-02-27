@@ -39,7 +39,7 @@ def searchItem(item):
           "instructions": instructions
       }
     #   with open("searches.json", "a") as jsonfile:
-    #       result_list.append(x)
+      result_list.append(x)
     #       json.dump(x, jsonfile)
   return result_list
 
