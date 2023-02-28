@@ -27,7 +27,7 @@ class User(db.Model):
     _uid = db.Column(db.String(255), unique=True, nullable=False)    
 
     # constructor of a User object, initializes the instance variables within object (self)
-    def __init__(self, rname, comment, rating, uid,):
+    def __init__(self, rname, comment, rating, uid):
         self._rname = rname    # variables with self prefix become part of the object, 
         self._comment = comment
         self._rating = rating
@@ -108,13 +108,14 @@ class User(db.Model):
 
     # CRUD update: updates recipe name, uid, review, rating
     # returns self
-    def update(self, rname="", comment="", rating="", uid=""):
+    def update(self, rname, comment, rating, uid):
         """only updates values with length"""
+        print(f"update: {rname}")
         if len(rname) > 0:
             self.rname = rname
         if len(comment) > 0:
             self.comment = comment
-        if len(rating) > 0:
+        if rating >= 10:
             self.rating = rating    
         if len(uid) > 0:
             self.uid = uid                   
@@ -124,6 +125,7 @@ class User(db.Model):
     # CRUD delete: remove self
     # None
     def delete(self):
+        print(self.id, self.uid)
         db.session.delete(self)
         db.session.commit()
         return None
@@ -155,4 +157,4 @@ def initUsers():
                 '''fails with bad or duplicate data'''
                 db.session.remove()
                 print(f"Records exist, duplicate email, or error: {user.uid}")
-            
+
