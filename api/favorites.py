@@ -36,6 +36,26 @@ class RecipeData(Resource):
 
         # Return a success message
         return {"message": "Data saved successfully"}
+    
+    def delete(self, title):
+        # Read the favorites data from the favorites.json file
+        try:
+            with open('favorites.json', 'r') as f:
+                favorites = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            favorites = []
+
+        # Find the recipe with the given title and remove it
+        for favorite in favorites:
+            if favorite['title'] == title:
+                favorites.remove(favorite)
+
+        # Write the updated favorites data back to the favorites.json file
+        with open('favorites.json', 'w') as f:
+            json.dump(favorites, f)
+
+        # Return a success message
+        return {"message": "Recipe deleted successfully"}
 
 class GetFavorites(Resource):
     # Handle GET requests to retrieve all favorites
@@ -50,8 +70,9 @@ class GetFavorites(Resource):
         # Return all favorites
         return favorites
 
+
 # Add the RecipeData resource with the POST endpoint
-api.add_resource(RecipeData, '/favorites')
+api.add_resource(RecipeData, '/favorites', '/favorites/<string:title>')
 
 # Add the GetFavorites resource with the GET endpoint
 api.add_resource(GetFavorites, '/favorites/all')
