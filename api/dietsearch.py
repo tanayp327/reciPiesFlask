@@ -48,9 +48,9 @@ def searchItem(item):
 
 
 class itemAPI:
-    class _Create(Resource):
+    class _Create_Update(Resource):
         def post(self):
             body = request.get_json()
             return searchItem(body.get("item"))
 
-    api.add_resource(_Create, '/')
+    api.add_resource(_Create_Update, '/')
