@@ -18,7 +18,7 @@ def searchItem(item):
     app_id = 'be8c6268'
     app_key = '1da5fbf54060504cc2506d8c9fff673a'
     items = "&health=".join(item)
-    url = f'https://api.edamam.com/api/recipes/v2?app_id={app_id}&app_key={app_key}&type=public&{items}'
+    url = f'https://api.edamam.com/api/recipes/v2?app_id={app_id}&app_key={app_key}&type=public&health={items}'
 
     print("DBG: Making a request: " + url)
     response = requests.get(url)
