@@ -12,8 +12,8 @@ search_api = Blueprint('search_api', __name__,
 # API docs https://flask-restful.readthedocs.io/en/latest/api.html
 api = Api(search_api)
 
-
 def searchItem(item):
+  filename = 'searches.json'
   result_list = []
   # JSON data:
   x = {"title": "", "ingredients": "", "instructions": ""}
@@ -27,28 +27,54 @@ def searchItem(item):
   }
 
   response = requests.request("GET", url, headers=headers, params=querystring)
+    # Read JSON file
+  with open(filename) as fp:
+    listObj = json.load(fp)
   parse_req = response.json()
   for i in range(len(parse_req)):
       title = parse_req[i]["title"]
       ingredients = parse_req[i]["ingredients"]
       instructions = parse_req[i]["instructions"]
       # JSON data:
-      x = {
+      x  =  {
           "title": title,
           "ingredients": ingredients,
           "instructions": instructions
       }
-    #   with open("searches.json", "a") as jsonfile:
       result_list.append(x)
-    #       json.dump(x, jsonfile)
+      with open(filename, 'w') as json_file:
+        json.dump(result_list, json_file, 
+                        indent=4,  
+                        separators=(',',': '))
   return result_list
 
-#api class
+def recentSearches():
+    search_list = []
+    f = open('searches.json')
+    data = json.load(f)
+    for i in data:
+      search_list.append(i)
+    return(search_list)
+
+def deleteSearches():
+  with open("searches.json", "w") as f:
+      # Write an empty JSON object to the file
+      json.dump([], f)
+
 class itemAPI:
-    class _Create(Resource):
+    class _Create_Update(Resource):
         def post(self):
             body = request.get_json()
             return searchItem(body.get("item"))
+    class _Read(Resource):
+        def get(self):
+            return recentSearches()
+    class _Delete(Resource):
+        def get(self):
+            deleteSearches()
+            return { "Status" : "Successfully Deleted Recent Searches"}
 
         
-    api.add_resource(_Create, '/')
+    api.add_resource(_Create_Update, '/')
+    api.add_resource(_Read, '/recently')
+    api.add_resource(_Delete, '/delete')
