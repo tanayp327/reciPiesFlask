@@ -88,6 +88,7 @@ class User(db.Model):
     def create(self):
         try:
             # creates a person object from User(db.Model) class, passes initializers
+            print("Inside create")
             db.session.add(self)  # add prepares to persist person object to Users table
             db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
             return self
@@ -98,6 +99,8 @@ class User(db.Model):
     # CRUD read converts self to dictionary
     # returns dictionary
     def read(self):
+        # entry = db.session.query(Users).get(args["id"])
+        # print(id,self.rname,self.uid,self.comment,self.rating)
         return {
             "id": self.id,
             "rname": self.rname,
@@ -106,30 +109,47 @@ class User(db.Model):
             "uid": self.uid            
         }
 
-    # CRUD update: updates recipe name, uid, review, rating
+    # CRUD update: updates comment, rating, uid
     # returns self
-    def update(self, rname, comment, rating, uid):
+    def put(self,id,comment,rating,uid):
         """only updates values with length"""
-        print(f"update: {rname}")
-        if len(rname) > 0:
-            self.rname = rname
-        if len(comment) > 0:
-            self.comment = comment
-        if rating >= 10:
-            self.rating = rating    
-        if len(uid) > 0:
-            self.uid = uid                   
-        db.session.commit()
-        return self
+        print("inside users.py update") 
+        entry = db.session.query(User).get(id)
+        print("sent request to update record", entry)  
+        print(id,comment,rating,uid)
+        try:
+            if entry: 
+                # db.session.update(self)
+                entry.comment = comment
+                entry.rating = rating
+                entry.uid = uid
+
+                # user.verified = True
+                print("updated record", entry)                            
+                db.session.commit()
+                return entry
+            else:
+                return {"error": "entry not found"}, 404                
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"server error: {e}"}, 500            
 
     # CRUD delete: remove self
     # None
-    def delete(self):
-        print(self.id, self.uid)
-        db.session.delete(self)
-        db.session.commit()
-        return None
-
+    def delete(id):
+        # print("inside users.py delete", id) 
+        try:
+            entry = db.session.query(User).get(id)
+            if entry: 
+                db.session.delete(entry)
+                db.session.commit()
+                print("deleted record", entry)                
+                return None
+            else:
+                return {"error": "entry not found"}, 404                
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"server error: {e}"}, 500
 
 """Database Creation and Testing """
 
@@ -157,4 +177,8 @@ def initUsers():
                 '''fails with bad or duplicate data'''
                 db.session.remove()
                 print(f"Records exist, duplicate email, or error: {user.uid}")
+
+        # u4.delete()
+        # u1.put("id"=4, "comment"="testing", "rating"=5, "uid"="vkuser")
+
 

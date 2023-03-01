@@ -59,17 +59,31 @@ class UserAPI:
         def delete(self):
             body = request.get_json()
             id = body.get('id')
-            user=User.query.filter_by(id=id).delete() 
+            print("inside user.py delete id", id)
+            user=User.delete(id)
             if user:
                 users = User.query.all()    # read/extract all users from database
                 json_ready = [user.read() for user in users]  # prepare output in json
                 return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps               
 
     class _Update(Resource):
-        def update(self):
+        def put(self):
+            print("inside user.py put")
             body = request.get_json()
             id = body.get('id')
-            user=User.query.filter_by(id=id).update() 
+            comment = body.get('comment')
+            rating = body.get('rating')
+            uid = body.get('uid')
+            # self.id = id
+            # if len(comment) > 0:
+            #     self.comment = comment
+            # if rating >= 10:
+            #     self.rating = rating    
+            # if len(uid) > 0:
+            #     self.uid = uid 
+            print("inside user.py update id", id)
+            user=User.put(self, id,comment,rating,uid)
+            # user=User.put(id, self.comment, self.rating, self.uid)
             if user:
                 users = User.query.all()    # read/extract all users from database
                 json_ready = [user.read() for user in users]  # prepare output in json
