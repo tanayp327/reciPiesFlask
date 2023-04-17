@@ -2,15 +2,15 @@ from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 
-from model.users import User
+from model.reviews import Review
 
-user_api = Blueprint('user_api', __name__,
-                   url_prefix='/api/users')
+review_api = Blueprint('review_api', __name__,
+                   url_prefix='/api/reviews')
 
 # API docs https://flask-restful.readthedocs.io/en/latest/api.html
-api = Api(user_api)
+api = Api(review_api)
 
-class UserAPI:        
+class ReviewAPI:        
     class _Create(Resource):
         def post(self):
             ''' Read data for json body '''
@@ -24,7 +24,7 @@ class UserAPI:
             # validate uid
             uid = body.get('uid')
             if uid is None or len(uid) < 2:
-                return {'message': f'User ID is missing, or is less than 2 characters'}, 210
+                return {'message': f'Review ID is missing, or is less than 2 characters'}, 210
             comment = body.get('comment')
             if comment is None or len(comment) < 2:
                 return {'message': f'Comment is missing, or is less than 2 characters'}, 220            # validate rname
@@ -32,43 +32,43 @@ class UserAPI:
             if rating is None or len(rating) < 1 or int(rating) > 10:
                 return {'message': f'Rating is missing, or is out of range'}, 230
 
-            ''' #1: Key code block, setup USER OBJECT '''
-            uo = User(rname=rname,
+            ''' #1: Key code block, setup REVIEW OBJECT '''
+            uo = Review(rname=rname,
                       comment=comment,
                       rating=rating,
                       uid=uid
                       )
             
            
-            ''' #2: Key Code block to add user to database '''
-            # create user in database
-            user = uo.create()
-            # success returns json of user
-            if user:
-                return jsonify(user.read())
+            ''' #2: Key Code block to add review to database '''
+            # create review in database
+            review = uo.create()
+            # success returns json of review
+            if review:
+                return jsonify(review.read())
             # failure returns error
-            return {'message': f'Processed {rname}, either a format error or User ID {uid} is duplicate'}, 240
+            return {'message': f'Processed {rname}, either a format error or Review ID {uid} is duplicate'}, 240
 
     class _Read(Resource):
         def get(self):
-            users = User.query.all()    # read/extract all users from database
-            json_ready = [user.read() for user in users]  # prepare output in json
+            reviews = Review.query.all()    # read/extract all reviews from database
+            json_ready = [review.read() for review in reviews]  # prepare output in json
             return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
 
     class _Delete(Resource):
         def delete(self):
             body = request.get_json()
             id = body.get('id')
-            print("inside user.py delete id", id)
-            user=User.delete(id)
-            if user:
-                users = User.query.all()    # read/extract all users from database
-                json_ready = [user.read() for user in users]  # prepare output in json
+            print("inside review.py delete id", id)
+            review=Review.delete(id)
+            if review:
+                reviews = Review.query.all()    # read/extract all reviews from database
+                json_ready = [review.read() for review in reviews]  # prepare output in json
                 return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps               
 
     class _Update(Resource):
         def put(self):
-            print("inside user.py put")
+            print("inside review.py put")
             body = request.get_json()
             id = body.get('id')
             comment = body.get('comment')
@@ -81,13 +81,13 @@ class UserAPI:
             #     self.rating = rating    
             # if len(uid) > 0:
             #     self.uid = uid 
-            print("inside user.py update id", id)
-            user=User.put(self, id,comment,rating,uid)
-            # user=User.put(id, self.comment, self.rating, self.uid)
-            if user:
-                users = User.query.all()    # read/extract all users from database
-                json_ready = [user.read() for user in users]  # prepare output in json
-                return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps                                     
+            print("inside review.py update id", id)
+            review=Review.put(self, id,comment,rating,uid)
+            # review=Review.put(id, self.comment, self.rating, self.uid)
+            if review:
+                reviews = Review.query.all()    # read/extract all reviews from database
+                json_ready = [review.read() for review in reviews]  # prepare output in json
+                return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
               
     # building RESTapi endpoint
     api.add_resource(_Create, '/create')

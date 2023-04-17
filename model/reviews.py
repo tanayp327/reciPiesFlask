@@ -11,22 +11,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 ''' Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along '''
 
-# Define the User class to manage actions in the 'users' table
+# Define the Review class to manage actions in the 'reviews' table
 # -- Object Relational Mapping (ORM) is the key concept of SQLAlchemy
 # -- a.) db.Model is like an inner layer of the onion in ORM
-# -- b.) User represents data we want to store, something that is built on db.Model
+# -- b.) Review represents data we want to store, something that is built on db.Model
 # -- c.) SQLAlchemy ORM is layer on top of SQLAlchemy Core, then SQLAlchemy engine, SQL
-class User(db.Model):
-    __tablename__ = 'users'  # table name is plural, class name is singular
+class Review(db.Model):
+    __tablename__ = 'reviews'  # table name is plural, class name is singular
 
-    # Define the User schema with "vars" from object
+    # Define the Review schema with "vars" from object
     id = db.Column(db.Integer, primary_key=True)
     _rname = db.Column(db.String(255), unique=False, nullable=False)
     _comment = db.Column(db.Text, unique=False, nullable=False)
     _rating = db.Column(db.Integer, unique=False, nullable=False)
     _uid = db.Column(db.String(255), unique=True, nullable=False)    
 
-    # constructor of a User object, initializes the instance variables within object (self)
+    # constructor of a Review object, initializes the instance variables within object (self)
     def __init__(self, rname, comment, rating, uid):
         self._rname = rname    # variables with self prefix become part of the object, 
         self._comment = comment
@@ -83,23 +83,23 @@ class User(db.Model):
     def __str__(self):
         return json.dumps(self.read())
 
-    # CRUD create/add a new record to the table
+    # create/add a new record to the table
     # returns self or None on error
     def create(self):
         try:
-            # creates a person object from User(db.Model) class, passes initializers
+            # creates a reviewer object from Review(db.Model) class, passes initializers
             print("Inside create")
-            db.session.add(self)  # add prepares to persist person object to Users table
+            db.session.add(self)  # add prepares to persist person object to Reviews table
             db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
             return self
         except IntegrityError:
             db.session.remove()
             return None
 
-    # CRUD read converts self to dictionary
+    # read converts self to dictionary
     # returns dictionary
     def read(self):
-        # entry = db.session.query(Users).get(args["id"])
+        # entry = db.session.query(Reviews).get(args["id"])
         # print(id,self.rname,self.uid,self.comment,self.rating)
         return {
             "id": self.id,
@@ -113,8 +113,8 @@ class User(db.Model):
     # returns self
     def put(self,id,comment,rating,uid):
         """only updates values with length"""
-        print("inside users.py update") 
-        entry = db.session.query(User).get(id)
+        print("inside reviews.py update") 
+        entry = db.session.query(Review).get(id)
         print("sent request to update record", entry)  
         print(id,comment,rating,uid)
         try:
@@ -123,9 +123,7 @@ class User(db.Model):
                 entry.comment = comment
                 entry.rating = rating
                 entry.uid = uid
-
-                # user.verified = True
-                print("updated record", entry)                            
+                print("updated record", entry)
                 db.session.commit()
                 return entry
             else:
@@ -137,9 +135,9 @@ class User(db.Model):
     # CRUD delete: remove self
     # None
     def delete(id):
-        # print("inside users.py delete", id) 
+        # print("inside reviews.py delete", id) 
         try:
-            entry = db.session.query(User).get(id)
+            entry = db.session.query(Review).get(id)
             if entry: 
                 db.session.delete(entry)
                 db.session.commit()
@@ -155,30 +153,27 @@ class User(db.Model):
 
 
 # Builds working data for testing
-def initUsers():
+def initReviews():
     with app.app_context():
         """Create database and tables"""
         db.init_app(app)
         db.create_all()
         """Tester data for table"""
-        u1 = User(rname='Recipe1', comment='Recipe1 comment', rating=5, uid='toby' )
-        u2 = User(rname='Recipe2', comment='Recipe2 comment', rating=6, uid='niko')
-        u3 = User(rname='Recipe3', comment='Recipe3 comment', rating=3, uid='lex')
-        u4 = User(rname='Recipe4', comment='Recipe4 comment', rating=8, uid='whit')
-        u5 = User(rname='Recipe5', comment='Recipe5 comment', rating=10, uid='jm1021')
+        u1 = Review(rname='Recipe1', comment='Recipe1 comment', rating=5, uid='toby' )
+        u2 = Review(rname='Recipe2', comment='Recipe2 comment', rating=6, uid='niko')
+        u3 = Review(rname='Recipe3', comment='Recipe3 comment', rating=3, uid='lex')
+        u4 = Review(rname='Recipe4', comment='Recipe4 comment', rating=8, uid='whit')
+        u5 = Review(rname='Recipe5', comment='Recipe5 comment', rating=10, uid='jm1021')
 
-        users = [u1, u2, u3, u4, u5]
+        reviews = [u1, u2, u3, u4, u5]
 
-        """Builds sample user/comment(s) data"""
-        for user in users:
+        """Builds sample review/comment(s) data"""
+        for review in reviews:
             try:
-                user.create()
+                review.create()
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
-                print(f"Records exist, duplicate email, or error: {user.uid}")
-
-        # u4.delete()
-        # u1.put("id"=4, "comment"="testing", "rating"=5, "uid"="vkuser")
+                print(f"Records exist, duplicate email, or error: {review.uid}")
 
 

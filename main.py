@@ -5,11 +5,11 @@ from flask import render_template  # import render_template from "public" flask 
 # import "packages" from "this" project
 from __init__ import app  # Definitions initialization
 from model.jokes import initJokes
-from model.users import initUsers
+from model.reviews import initReviews
 
 # setup APIs
 from api.covid import covid_api # Blueprint import api definition
-from api.user import user_api # Blueprint import api definition
+from api.review import review_api # Blueprint import api definition
 from api.search import search_api 
 from api.favorites import favorites_api
 from api.dietsearch import restrictions_api
@@ -19,7 +19,7 @@ from projects.projects import app_projects # Blueprint directory import projects
 
 # register URIs
 app.register_blueprint(covid_api) # register api routes
-app.register_blueprint(user_api) # register api routes
+app.register_blueprint(review_api) # register api routes
 app.register_blueprint(search_api)
 app.register_blueprint(restrictions_api)
 app.register_blueprint(favorites_api)
@@ -41,7 +41,7 @@ def stub():
 @app.before_first_request
 def activate_job():
     initJokes()
-    initUsers()
+    initReviews()
 
 # this runs the application on the development server
 if __name__ == "__main__":
