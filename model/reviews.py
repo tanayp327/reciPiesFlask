@@ -23,7 +23,7 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     _rname = db.Column(db.String(255), unique=False, nullable=False)
     _comment = db.Column(db.Text, unique=False, nullable=False)
-    _rating = db.Column(db.Integer, unique=False, nullable=False)
+    _rating = db.Column(db.String, unique=False, nullable=False)
     _uid = db.Column(db.String(255), unique=True, nullable=False)    
 
     # constructor of a Review object, initializes the instance variables within object (self)

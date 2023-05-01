@@ -20,17 +20,17 @@ class ReviewAPI:
             # validate rname
             rname = body.get('rname')
             if rname is None or len(rname) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 200
+                return {'message': 'Name is missing, or is less than 2 characters'}, 200
             # validate uid
             uid = body.get('uid')
             if uid is None or len(uid) < 2:
-                return {'message': f'Review ID is missing, or is less than 2 characters'}, 210
+                return {'message': 'Review ID is missing, or is less than 2 characters'}, 210
             comment = body.get('comment')
             if comment is None or len(comment) < 2:
-                return {'message': f'Comment is missing, or is less than 2 characters'}, 220            # validate rname
+                return {'message': 'Comment is missing, or is less than 2 characters'}, 220            # validate rname
             rating = body.get('rating')
-            if rating is None or len(rating) < 1 or int(rating) > 10:
-                return {'message': f'Rating is missing, or is out of range'}, 230
+            if rating.isnumeric() == "false" or int(rating) > 10:
+                return {'message': 'Rating is missing/alpha, or is out of range'}, 230
 
             ''' #1: Key code block, setup REVIEW OBJECT '''
             uo = Review(rname=rname,
